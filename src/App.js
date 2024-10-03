@@ -58,15 +58,15 @@ function App() {
   }, [obj, setObj])
 
   return (
-    <>
+    <div style ={{ margin: 'auto 25px' }}>
       <ValueEntry value={num} onChange={val => setNum(val)} restrictions={['number']}/>
       <hr />
       <NameEntry first={first} last={last} onChange={evt => (evt.isFirst ? setFirst : setLast)(evt.value)} />
       <hr />
-      <ArrayEntry value={todos} onChange={todosChange} removeAt={todosRemoveAt} append={todosAppend} restrictions={{ 1: ['number'] }} />
+      <ArrayEntry value={todos} onChange={todosChange} removeAt={todosRemoveAt} append={todosAppend} restrictions={{ 1: ['number'] }} elementEntryStyle={{ margin: '0px' }} />
       <hr />
       <ObjectEditor value={obj} onChange={objChange} append={objAppend} remove={objRemove} />
-    </>
+    </div>
   );
 }
 
