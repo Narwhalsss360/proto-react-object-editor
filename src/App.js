@@ -1,24 +1,16 @@
-import logo from './logo.svg';
 import './App.css';
+import { useReducer } from 'react';
+import ObjectEditor, { genericReducer } from './editor/ObjectEditor';
 
 function App() {
+  const [object, dispatch] = useReducer(genericReducer, {})
+
+  console.debug(object)
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <ObjectEditor value={object} dispatcher={dispatch}/>
+    </>
   );
 }
 
