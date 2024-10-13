@@ -27,6 +27,17 @@ const TYPE_TO_GENERATOR = {
   null: () => null
 }
 
+function requireValidType(object) {
+  if (typeof object in TYPE_TO_NAME) {
+    return object
+  }
+  throw Error(`Type ${typeof object} is not supported.`)
+}
+
+function isSimple(object) {
+  return typeof object in SIMPLE_TYPE_TO_NAME
+}
+
 export function genericReducer(state, action) {
   function inner() {
     if (!('type' in action)) {
@@ -156,32 +167,38 @@ export function genericReducer(state, action) {
   return inner()
 }
 
-export function SimpleEditor({ value, dispatcher, deletable=true }) {
+export function SimpleEditor({ value, dispatcher, deleter=null }) {
   if (!(typeof value in SIMPLE_TYPE_TO_NAME) && value !== null) {
     throw Error(`Type ${typeof value} is not supported by ${SimpleEditor}`)
   }
 
   useEffect(() => {
-    if (!deletable && value === null) {
+    if (deleter !== null && value === null) {
       dispatcher({ type: 'set-as', value: '' })
     }
-  }, [deletable, value, dispatcher])
-
-  const deleter = useCallback(() => {
-
-  }, [])
+  }, [deleter, value, dispatcher])
 
   return (
     <div style={{ display: 'flex', flexDirection: 'row'}}>
       {
-        deletable &&
+        deleter !== null &&
         <button onClick={deleter}>×</button>
       }
+
+      <input
+        type={typeof value === 'boolean' ? 'checkbox' : typeof value}
+        placeholder='value'
+        value={value}
+        onChange={evt => dispatcher({
+          type: 'set-as',
+          value: typeof value === 'boolean' ? value === true : evt.target.value
+        })}
+      />
     </div>
   )
 }
 
-export function ComplexEditor({ value, dispatcher, deletable=true }) {
+export function ComplexEditor({ value, dispatcher, deleter=null }) {
   if (!(typeof value in COMPLEX_TYPE_TO_NAME)) {
     throw Error(`Type ${typeof value} is not supported by ${ComplexEditor}`)
   }
@@ -221,6 +238,10 @@ export function ComplexEditor({ value, dispatcher, deletable=true }) {
 
   const topLevelControls = (
     <>
+      {
+        deleter !== null &&
+        <button onClick={deleter}>×</button>
+      }
       <select value={appendInfo.type} onChange={switchAppendType}>
         {
           items(TYPE_TO_NAME).map(pair => {
@@ -230,19 +251,77 @@ export function ComplexEditor({ value, dispatcher, deletable=true }) {
         }
       </select>
       <input value={appendInfo.key} placeholder='key' onChange={evt => dispatchAppendInfo({ type: 'set-key', key: 'key', value: evt.target.value })} />
-      <input type={appendInfo.type === 'boolean' ? 'checkbox' : appendInfo.type} placeholder='value' value={appendInfo.value} onChange={evt => dispatchAppendInfo({ type: 'set-key', key: 'value', value: evt.target.value })} />
+      {
+        appendInfo.type in SIMPLE_TYPE_TO_NAME &&
+        <input type={appendInfo.type === 'boolean' ? 'checkbox' : appendInfo.type} placeholder='value' value={appendInfo.value} onChange={evt => dispatchAppendInfo({ type: 'set-key', key: 'value', value: typeof evt.target.value === 'boolean' ? evt.target.value === true : evt.target.value })} />
+      }
       <button onClick={append}>+</button>
     </>
   )
 
   return (
     <>
-      {topLevelControls}
-      <br/>
-     {
-        isEmpty ?
-        <em>...</em> :
-        <></>
+    {
+      value === null ?
+        <em>null</em> :
+        <>
+          {topLevelControls}
+          <br/>
+          {
+            isEmpty ?
+            <em>...</em> :
+            <ul>
+              {
+                items(value).map(pair => {
+                  const [key, value] = pair
+                  let editor = null;
+
+                  if (isSimple(requireValidType(value))) {
+                    function innerDispatcher(action) {
+                      if (action.type !== 'set-as') {
+                        throw Error('Expected "set-as" action type')
+                      }
+                      dispatcher({ type: 'set-key', key, value: action.value })
+                    }
+
+                    editor = <SimpleEditor
+                      value={value}
+                      dispatcher={innerDispatcher}
+                      deleter={() => dispatcher({
+                        type: 'delete-key',
+                        key
+                      })}
+                    />
+                  } else {
+                    function innerDispatcher(action) {
+                      dispatcher({
+                        type: 'set-key',
+                        key,
+                        value: genericReducer(value, action)
+                      })
+                    }
+
+                    editor = <ComplexEditor
+                      value={value}
+                      dispatcher={innerDispatcher}
+                      deleter={() => dispatcher({
+                        type: 'delete-key',
+                        key
+                      })}
+                    />
+                  }
+
+                  return (
+                    <li key={key}>
+                      <label>{key} </label>
+                      {editor}
+                    </li>
+                  )
+                })
+              }
+            </ul>
+          }
+        </>
       }
     </>
   )
@@ -250,11 +329,10 @@ export function ComplexEditor({ value, dispatcher, deletable=true }) {
 
 export default function ObjectEditor({ value, dispatcher }) {
   const determineEditor = useCallback(() =>
-    typeof value in SIMPLE_TYPE_TO_NAME ?
+    isSimple(requireValidType(value)) ?
     <SimpleEditor value={value} dispatcher={dispatcher} /> :
-    typeof value in COMPLEX_TYPE_TO_NAME ?
-    <ComplexEditor value={value} dispatcher={dispatcher}/> :
-    null, [value, dispatcher])
+    <ComplexEditor value={value} dispatcher={dispatcher} />,
+    [value, dispatcher])
 
   const [Editor, setEditor] = useState(determineEditor())
 
