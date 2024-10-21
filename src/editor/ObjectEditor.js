@@ -151,6 +151,7 @@ export default function ObjectEditor({ value, dispatcher, deleter= null }) {
     return (
       <ListGroup.Item key={key}>
         <Badge style={{ margin: '5px' }}>{key}</Badge>
+        <Form.Control />
         {editor}
       </ListGroup.Item>
     )

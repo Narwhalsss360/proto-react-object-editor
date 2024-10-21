@@ -4,7 +4,126 @@ import Form from 'react-bootstrap/Form'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Card from 'react-bootstrap/Card'
+import useOnFirstLoad from '../hooks/useOnFirstLoad'
 import { inputType, isSimple, isValidType, requireValidType, TYPE_PARSERS, TYPE_TO_GENERATOR, TYPE_TO_NAME } from './types'
+
+export function SchemaSimpleEditor({ value, dispatcher, deleter=null, style={}, schema = null }) {
+  if (!isSimple(requireValidType(value))) {
+    throw Error(`${SimpleEditor} 'value' must be a "simple" type.`)
+  }
+
+  const set = useCallback(as => {
+    const parsed = TYPE_PARSERS[typeof value](as)
+    const validated = schema?.validator?.(parsed) ?? parsed
+    dispatcher({
+      type: 'set-as',
+      value: validated
+    })
+  }, [schema, value, dispatcher])
+
+  const validateTypes = useCallback(() => {
+    if (schema?.types  === null) {
+      return
+    }
+    schema.types.forEach(type => {
+      if (!isSimple(isValidType(type)) && !(('__OVERRIDE_TYPES__') in schema)) {
+        throw Error(`Type ${type} from the 'types' list is invalid.`)
+      }
+    })
+  }, [schema])
+
+  const typeSelect = useCallback(evt => {
+    dispatcher({
+      type: 'set-as',
+      value: TYPE_TO_GENERATOR[evt.target.value]()
+    })
+  }, [dispatcher])
+
+  useOnFirstLoad(useCallback(() => {
+    if (schema === null || !('default' in schema)) {
+      return
+    }
+    typeSelect({ target: { value: typeof schema.default } })
+    set(schema.default)
+  }, [schema, typeSelect, set]))
+
+  useEffect(() => {
+    if (deleter === null && value === null) {
+      set('')
+    }
+  }, [deleter, value, set])
+
+  useEffect(validateTypes, [validateTypes])
+
+  useEffect(() => {
+
+  }, [schema, value, typeSelect, set])
+
+  return (
+    <Card body>
+      <Form style={style} onSubmit={evt => evt.preventDefault() }>
+        <Row>
+          {
+            deleter !== null &&
+            <Col md='auto'>
+              <Button variant='outline-danger' onClick={deleter}>Delete</Button>
+            </Col>
+          }
+
+          <Col>
+            {
+              schema?.types !== null &&
+              <Form.Select value={typeof value} onChange={typeSelect}>
+                {
+                  schema.types.map(type => (
+                    <option key={type} value={type}>{TYPE_TO_NAME[type]}</option>
+                  ))
+                }
+              </Form.Select>
+            }
+          </Col>
+
+          <Col>
+            {
+              typeof value === 'boolean' ?
+              <div style={{
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '100%'
+              }}>
+                {
+                  schema?.label !== null &&
+                  <label>{schema.label} </label>
+                }
+                <input
+                type='checkbox'
+                style={{ margin: '15px 10px 10px 10px' }}
+                checked={value}
+                onChange={evt => set(evt.target.checked)}
+                />
+              </div> :
+              <input
+              type={inputType(typeof value)}
+              value={value}
+              placeholder={schema?.label ?? ''}
+              onChange={evt => set(evt.target.value)}
+              style={{
+                width: '100%',
+                height: '100%',
+                margin: 'auto 5px',
+                borderRadius: '5px',
+                borderWidth: '1px'
+              }}
+              />
+            }
+          </Col>
+        </Row>
+      </Form>
+    </Card>
+  )
+}
 
 export default function SimpleEditor({ value, dispatcher, label=null, deleter=null, types=null, style={}, overrideSimpleTypes = false }) {
   if (!isSimple(requireValidType(value))) {
