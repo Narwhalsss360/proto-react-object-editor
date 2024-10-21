@@ -1,3 +1,21 @@
+# TODO
+* **ObjectEditor**:
+  * Can append a schema by it's type, as well as allowed types for 'other' ex. { optional: { types: [...], default: REQUIRED } }
+**ArrayEditor**:
+  * Complete
+
+# Design
+
+**Simple**: Label. Type selector (if required), Badge *if* strict type. Entry. Bool entry checkbox/button pair with custom labels. Card with label in header.
+
+**Array**: Insert at position, with value entry. Numbered list group, insert at *position* **not** index. Delete (x), drag/drop? else move overlay. Child is **Simple**.
+
+**Object**: Accordian Label is key. Key edit Append key at position with value entry. Drag/drop move? Child is **Simple**. Delete (x).
+
+# TODO
+
+...
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
