@@ -9,7 +9,7 @@ export default function generalReducer(state, action) {
   const replace_array = (array) => [ ...array ]
 
   const replace_array_with = (array, index, value) => {
-    const newArray = replace_array()
+    const newArray = replace_array(array)
     newArray[index] = value
     return newArray
   }
@@ -105,6 +105,7 @@ export default function generalReducer(state, action) {
       require_value()
       return [ ...state, action.value ]
     case 'swap-elements':
+      require_index()
       if (!('target' in action)) {
         throw Error(`Action type: '${action.type}' requires the 'target' property`)
       }

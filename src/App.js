@@ -3,8 +3,9 @@ import React, { useReducer } from 'react';
 import generalReducer from './editor/reducers';
 import SimpleEditor from './editor/SimpleEditor';
 import { keys } from './editor/objectIterators';
-import { SIMPLE_TYPE_NAME } from './editor/types';
+import { SIMPLE_TYPE_NAME, TYPE_NAMES } from './editor/types';
 import ObjectEditor from './editor/ObjectEditor';
+import ArrayEditor from './editor/ArrayEditor';
 
 function validateName(name) {
   if (name.length > 32) {
@@ -64,6 +65,7 @@ function App() {
   const [simple, dispatchSimple] = useReducer(generalReducer, '')
   const [object, dispatchObject] = useReducer(generalReducer, {})
   const [student, dispatchStudent] = useReducer(generalReducer, {})
+  const [array, dispatchArray] = useReducer(generalReducer, [])
 
   return (
     <div className="App">
@@ -103,11 +105,25 @@ function App() {
       }
       <hr />
       {
-        true &&
+        false &&
         <ObjectEditor
         value={student}
         dispatcher={dispatchStudent}
         schema={STUDENT_SCHEMA}
+        />
+      }
+      <hr />
+      {
+        true &&
+        <ArrayEditor
+          value={array}
+          dispatcher={dispatchArray}
+          schema={{
+            label: 'Array',
+            other: {
+              types: keys(TYPE_NAMES)
+            }
+          }}
         />
       }
     </div>

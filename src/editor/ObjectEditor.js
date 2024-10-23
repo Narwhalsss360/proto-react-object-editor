@@ -14,6 +14,19 @@ import { inputType, isSimple, isSimpleType, requireValidType, TYPE_PARSERS, TYPE
 import generalReducer from './reducers'
 import SimpleEditor from './SimpleEditor'
 import useOnFirstLoad from '../hooks/useOnFirstLoad'
+import ArrayEditor from './ArrayEditor'
+
+function removeComplex(scheme) {
+  const SIMPLE_TYPES = keys(SIMPLE_TYPE_NAME)
+  if (scheme === null) {
+    return null
+  }
+  const replaced = { ...scheme }
+  if ('types' in replaced) {
+    replaced.types = replaced.types.filter(type => SIMPLE_TYPES.includes(type))
+  }
+  return replaced
+}
 
 function ChildEditor({ childKey, value, objectDispatcher, schema }) {
   const [newKey, setNewKey] = useState(null)
@@ -81,7 +94,14 @@ function ChildEditor({ childKey, value, objectDispatcher, schema }) {
       <Accordion.Body>
         {
           Array.isArray(value) ?
-          <>{(() => { throw Error('Not implemented') })()}</> :
+          <ArrayEditor
+            value={value}
+            dispatcher={action => objectDispatcher({
+              type: 'set-key',
+              key: childKey,
+              value: generalReducer(value, action)
+            })}
+          /> :
           isSimple(value) ?
           <SimpleEditor
             value={value}
@@ -98,7 +118,7 @@ function ChildEditor({ childKey, value, objectDispatcher, schema }) {
             scheme={{
               label: childKey,
               types: keys(SIMPLE_TYPE_NAME),
-              ...(scheme ?? {})
+              ...removeComplex(scheme ?? {})
             }}
             deleter={required ? null : deleter}
           /> :
@@ -125,8 +145,7 @@ export default function ObjectEditor({
   value,
   dispatcher,
   deleter = null,
-  schema = {},
-  style = {}
+  schema = {}
 }) {
   if (isSimple(requireValidType(value))) {
     throw Error(`Type ${typeof value} is unsupported by ${ObjectEditor}`)
@@ -135,6 +154,8 @@ export default function ObjectEditor({
   }
 
   const isEmpty = useCallback(() => keys(value).length === 0, [value])
+
+  const required = schema !== null && 'required' in schema && schema.required === true
 
   const [newInfo, disptachNewInfo] = useReducer(generalReducer, {
     type: 'string',
@@ -286,7 +307,7 @@ export default function ObjectEditor({
       <Card.Header>
         <Row>
           {
-            deleter !== null &&
+            !required && deleter !== null &&
             <Col md={'auto'}>
               <CloseButton onClick={deleter} />
             </Col>

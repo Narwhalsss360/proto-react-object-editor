@@ -1,8 +1,15 @@
 # TODO
+* **Schema**
+  * other.types topography: newtypes and other types must be seperate
+  * Make deleter a part of the schema
 * **ObjectEditor**:
   * Can append a schema by it's type, as well as allowed types for 'other' ex. { optional: { types: [...], default: REQUIRED } }
+  * Data validation on new key
+  * newControls: Make sure schema.other.types exists
 **ArrayEditor**:
   * Complete
+  * Data validation on new position
+  * newControls: Make sure schema.other.types exists
 
 # Design
 

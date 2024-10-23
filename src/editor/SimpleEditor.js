@@ -14,10 +14,7 @@ export default function SimpleEditor({
   value,
   dispatcher,
   deleter = null,
-  scheme = null,
-  style = {},
-  rowStyle = {},
-  colStyle = {}
+  scheme = null
 }) {
   if (!isSimple(requireValidType(value))) {
     throw Error(`Type ${typeof value} is an unsupported type of ${SimpleEditor}`)
@@ -120,22 +117,22 @@ export default function SimpleEditor({
   useOnFirstLoad(setDefault, [setDefault])
 
   return (
-    <Card style={style}>
+    <Card>
       {
         scheme !== null&& 'label' in scheme &&
         <Card.Header>{scheme.label}</Card.Header>
       }
       <Card.Body>
         <Form onSubmit={evt => evt.preventDefault() }>
-          <Row style={rowStyle}>
+          <Row>
             {
               deleter !== null &&
-              <Col style={colStyle} md='auto'>
+              <Col md='auto'>
                 <CloseButton onClick={deleter} style={{ margin: '25%' }} />
               </Col>
             }
 
-            <Col style={colStyle} md='auto'>
+            <Col md='auto'>
             {
               scheme === null || !('types' in scheme) || scheme.types.length === 1 ?
               <Badge style={{ margin: '25% auto' }}>{TYPE_NAMES[typeof value]}</Badge> :
