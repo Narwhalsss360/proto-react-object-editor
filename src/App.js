@@ -3,6 +3,8 @@ import { useReducer } from 'react';
 import SimpleEditor from './editor/SimpleEditor'
 import ObjectEditor from './editor/ObjectEditor';
 import ArrayEditor from './editor/ArrayEditor';
+import Editor from './editor/Editor';
+import Button from 'react-bootstrap/Button'
 import generalReducer from './editor/reducers'
 import { SIMPLE_TYPES, TYPES } from './editor/types';
 import { defaultGenerator } from './editor/schemas';
@@ -45,6 +47,7 @@ function App() {
   const [student, dispatchStudent] = useReducer(generalReducer, {})
   const [array, dispatchArray] = useReducer(generalReducer, [])
   const [students, dispatchStudents] = useReducer(generalReducer, [])
+  const [dish, dispatchDish] = useReducer(generalReducer, {})
 
   return (
     <div className="App">
@@ -113,7 +116,7 @@ function App() {
       }
       <hr />
       {
-        true &&
+        false &&
         <ArrayEditor
           value={students}
           schema={{
@@ -137,6 +140,49 @@ function App() {
             dispatcher: dispatchStudents,
           }}
         />
+      }
+      {
+        true &&
+        <>
+          <Editor
+            value={dish}
+            schema={{
+              label: 'Dish',
+              types: ['object'],
+              dispatcher: dispatchDish,
+              children: {
+                Name: { types: ['string'], label: 'Name', required: true, defualt: 'My Dish' },
+                Calories: { types: ['number'], label: 'Calories', required: true, default: 0, validator: n => n < 0 ? 0 : null },
+                'Serving Size': { types: ['string'], label: 'Serving Size', required: true, default: '' },
+                Ingredients: {
+                  types: ['object'],
+                  others: {
+                    types: ['object'],
+                    children: {
+                      Amount: { types: ['string'], label: 'Amount', required: true, defualt: '50g' },
+                      Notes: { types: ['string'], label: 'Notes', default: '' }
+                    },
+                    others: {
+                      types: [],
+                    }
+                  },
+                  default: {}
+                },
+                'Other Attributes': {
+                  types: ['object'],
+                  others: {
+                    types: TYPES
+                  },
+                  default: {}
+                }
+              },
+              others: {
+                types: []
+              }
+            }}
+          />
+          <Button onClick={() => console.log(dish)}>Print Dish To Console</Button>
+        </>
       }
     </div>
   );

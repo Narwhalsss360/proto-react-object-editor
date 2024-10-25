@@ -71,7 +71,7 @@ export default function SimpleEditor({ value, scheme }) {
         <Form onSubmit={evt => evt.preventDefault()}>
           <Row>
             {
-              property(scheme, 'deleter') !== undefined &&
+              property(scheme, 'deleter', null) !== null &&
               <Col md='auto'>
                 <CloseButton onClick={scheme.deleter} />
               </Col>
