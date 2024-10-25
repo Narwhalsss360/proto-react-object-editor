@@ -54,14 +54,15 @@ export default function NewChildControls({ newChildInfo, dispatchNewChildInfo, o
         </Col>
         <Col md='auto'>
           <Form.Control
-            value={isArray ? newChildInfo.index + 1 : newChildInfo.key}
+            type={isArray ? 'number' : 'text'}
+            value={isArray ? newChildInfo.position : newChildInfo.key}
             placeholder={isArray ? 'Position' : 'Key'}
             onChange={evt =>
               isArray ?
               dispatchNewChildInfo({
                 type: 'set-key',
                 key: 'position',
-                value: Number(evt.target.value)
+                value: evt.target.value < 0 ? '' : Number(evt.target.value)
               }) :
               dispatchNewChildInfo({
                 type: 'set-key',
@@ -100,7 +101,7 @@ export default function NewChildControls({ newChildInfo, dispatchNewChildInfo, o
             <em>...</em>
           }
         </Col>
-        <Col>
+        <Col md='auto'>
           <Button variant='outline-success' type='submit'>+</Button>
         </Col>
       </Row>

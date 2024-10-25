@@ -26,7 +26,7 @@ export default function SimpleEditor({ value, scheme }) {
 
   const set = useCallback(as => {
     const parsed = TYPE_PARSERS[typeof value](as)
-    const validated = scheme?.validator?.(parsed) ??parsed 
+    const validated = property(scheme, 'validator', value => null)(parsed) ?? parsed
     dispatcher({
       type: 'set-as',
       value: validated
@@ -34,7 +34,7 @@ export default function SimpleEditor({ value, scheme }) {
   }, [value, scheme, dispatcher])
 
   const validateTypes = useCallback(() => {
-    if ('__OVERRIDE_TYPES__' in scheme) {
+    if (property(scheme, '__OVERRIDE_TYPES__', false)) {
       return
     }
 
