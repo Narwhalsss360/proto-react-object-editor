@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "./static/css/main.9de64e0c.css",
-    "main.js": "./static/js/main.3ffcabd8.js",
-    "static/js/453.766a9442.chunk.js": "./static/js/453.766a9442.chunk.js",
-    "index.html": "./index.html",
-    "main.9de64e0c.css.map": "./static/css/main.9de64e0c.css.map",
-    "main.3ffcabd8.js.map": "./static/js/main.3ffcabd8.js.map",
-    "453.766a9442.chunk.js.map": "./static/js/453.766a9442.chunk.js.map"
+    "main.css": "/narwhalsss360.github.io/proto-react-object-editor/static/css/main.9de64e0c.css",
+    "main.js": "/narwhalsss360.github.io/proto-react-object-editor/static/js/main.7f162a73.js",
+    "static/js/453.766a9442.chunk.js": "/narwhalsss360.github.io/proto-react-object-editor/static/js/453.766a9442.chunk.js",
+    "index.html": "/narwhalsss360.github.io/proto-react-object-editor/index.html",
+    "main.9de64e0c.css.map": "/narwhalsss360.github.io/proto-react-object-editor/static/css/main.9de64e0c.css.map",
+    "main.7f162a73.js.map": "/narwhalsss360.github.io/proto-react-object-editor/static/js/main.7f162a73.js.map",
+    "453.766a9442.chunk.js.map": "/narwhalsss360.github.io/proto-react-object-editor/static/js/453.766a9442.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.9de64e0c.css",
-    "static/js/main.3ffcabd8.js"
+    "static/js/main.7f162a73.js"
   ]
 }
