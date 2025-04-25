@@ -12,7 +12,8 @@ import ArrayEditor from './ArrayEditor'
 import SimpleEditor from './SimpleEditor'
 import getScheme, { property, requireProperty } from './schemas'
 import generalReducer from './generalReducer'
-import { isSimple, TYPES } from './types'
+import { isSimple, TYPES, TYPE_NAMES, TYPE_GENERATORS } from './types'
+import { keys } from './objectIterators'
 
 export default function ChildEditor({ childKey, value, schema, parent }) {
   const parentIsArray = Array.isArray(parent)
@@ -38,6 +39,21 @@ export default function ChildEditor({ childKey, value, schema, parent }) {
     })
   }, [dispatcher, parentIsArray, index, childKey, newPosition, newKey])
 
+  const setType = useCallback(type => {
+    dispatcher(parentIsArray ? {
+      type: 'set-element',
+      index,
+      value: TYPE_GENERATORS[type]()
+    } : {
+      type: 'set-key',
+      key: childKey,
+      value: TYPE_GENERATORS[type]()
+    })
+    setNewKey(null)
+  }, [parentIsArray, dispatcher, index, childKey])
+
+  const templateTypeCombo = property(property(schema, 'others'), 'types', [])
+  .concat(keys(property(schema, 'templates', {})).filter(template => !TYPES.includes(template)))
   const headerGenerator = (value, schema) => (
     <Row>
       {
@@ -46,7 +62,26 @@ export default function ChildEditor({ childKey, value, schema, parent }) {
           <CloseButton onClick={schema.deleter} />
         </Col>
       }
-      <Col>
+      {
+        newKey !== null &&
+        (Array.isArray(value) || !isSimple(value)) &&
+        <Col md='auto'>
+          <Form.Select value={typeof value} onChange={evt => setType(evt.target.value)}>
+            {
+              templateTypeCombo.map(type => (
+                <option key={type} value={type}>
+                  {
+                    type in TYPE_NAMES ?
+                    TYPE_NAMES[type] :
+                    type
+                  }
+                </option>
+              ))
+            }
+          </Form.Select>
+        </Col>
+      }
+      <Col style={{margin: 'auto'}}>
       {
         newKey === null ?
           <Badge
