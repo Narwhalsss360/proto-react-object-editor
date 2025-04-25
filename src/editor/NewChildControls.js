@@ -8,7 +8,9 @@ import { inputType, isSimple, TYPE_GENERATORS, TYPE_NAMES, TYPE_PARSERS, TYPES }
 import { keys } from './objectIterators'
 import { property } from './schemas'
 
-export default function NewChildControls({ newChildInfo, dispatchNewChildInfo, onSubmit, schema, parentType }) {
+export default function NewChildControls({ newChildInfo, dispatchNewChildInfo, onSubmit, schema, parent }) {
+  const parentType = Array.isArray(parent) ? 'array' : 'object'
+
   const setType = useCallback(type => {
     const generatedType = (
       type in TYPE_GENERATORS ?
@@ -65,7 +67,7 @@ export default function NewChildControls({ newChildInfo, dispatchNewChildInfo, o
             }
           </Form.Select>
         </Col>
-        <Col md='auto'>
+        <Col>
           <Form.Control
             type={parentType === 'object' ? 'text' : 'number'}
             value={newChildInfo[parentType === 'object' ? 'key' : 'position']}
@@ -80,12 +82,12 @@ export default function NewChildControls({ newChildInfo, dispatchNewChildInfo, o
               dispatchNewChildInfo({
                 type: 'set-key',
                 key: 'position',
-                value: evt.target.value < 0 ? '' : Number(evt.target.value)
+                value: 0 <= evt.target.value && evt.target.value <= parent.length ? Number(evt.target.value) : ''
               })
             }
           />
         </Col>
-        <Col md='auto'>
+        <Col>
           {
             newChildInfo.type === 'boolean' ?
             <BooleanControl

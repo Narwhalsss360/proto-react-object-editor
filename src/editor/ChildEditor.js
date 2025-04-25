@@ -52,8 +52,9 @@ export default function ChildEditor({ childKey, value, schema, parent }) {
           <Badge
             onClick={() =>
             property(schema, 'required', false) ? null : setNewKey(parentIsArray ? index + 1 : childKey)}
+            style={{cursor: 'pointer'}}
           >
-            {parentIsArray ? index + 1 : childKey}
+            ✎ &nbsp; {parentIsArray ? index + 1 : childKey}
           </Badge>
         </Col> :
         <Form onSubmit={evt => evt.preventDefault()}>
@@ -92,7 +93,7 @@ export default function ChildEditor({ childKey, value, schema, parent }) {
           value: generalReducer(value, action)
         }),
         deleter: property(scheme, 'required', false) ? null : () => dispatcher(parentIsArray ? {
-          type: 'delete-key',
+          type: 'delete-element',
           index
         } : {
           type: 'delete-key',

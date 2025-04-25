@@ -87,7 +87,7 @@ export default function ArrayEditor({ value, schema }) {
           dispatchNewChildInfo={dispatchNewChildInfo}
           onSubmit={newChildSubmitted}
           schema={schema}
-          parentType='array'
+          parent={value}
         />
         <hr />
       </>
@@ -99,12 +99,12 @@ export default function ArrayEditor({ value, schema }) {
         {
           value.map((item, index) => (
             <ChildEditor
-            key={index}
-            childKey={index}
-            value={item}
-            schema={schema}
+              key={index}
+              childKey={index}
+              value={item}
+              schema={schema}
               parent={value}
-              />
+            />
           ))
         }
       </ListGroup>

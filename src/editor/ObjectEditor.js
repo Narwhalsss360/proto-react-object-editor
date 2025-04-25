@@ -131,7 +131,7 @@ export default function ObjectEditor({ value, schema }) {
             dispatchNewChildInfo={dispatchNewChildInfo}
             onSubmit={newChildSubmitted}
             schema={schema}
-            parentType='object'
+            parent={value}
           />
           <hr />
         </>
