@@ -7,6 +7,7 @@ import BooleanControl from './BooleanControl'
 import { inputType, isSimple, TYPE_GENERATORS, TYPE_NAMES, TYPE_PARSERS, TYPES } from './types'
 import { keys } from './objectIterators'
 import { property } from './schemas'
+import { Badge } from 'react-bootstrap'
 
 export default function NewChildControls({ newChildInfo, dispatchNewChildInfo, onSubmit, schema, parent }) {
   const parentType = Array.isArray(parent) ? 'array' : 'object'
@@ -52,7 +53,10 @@ export default function NewChildControls({ newChildInfo, dispatchNewChildInfo, o
   return (
     <Form onSubmit={submit}>
       <Row>
-        <Col md='auto'>
+        <Col md='auto' style={{margin: 'auto'}}>
+        {
+          templateTypeCombo.length === 1 ?
+          <Badge>{templateTypeCombo[0] in TYPE_NAMES ? TYPE_NAMES[templateTypeCombo[0]] : templateTypeCombo[0]}</Badge> :
           <Form.Select value={newChildInfo.type} onChange={evt => setType(evt.target.value)}>
             {
               templateTypeCombo.map(type => (
@@ -66,6 +70,7 @@ export default function NewChildControls({ newChildInfo, dispatchNewChildInfo, o
               ))
             }
           </Form.Select>
+        }
         </Col>
         <Col>
           <Form.Control
