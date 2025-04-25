@@ -3,13 +3,21 @@ import { useReducer } from 'react';
 import generalReducer from './editor/generalReducer';
 import SimpleEditor from './editor/SimpleEditor';
 import ObjectEditor from './editor/ObjectEditor';
-import { isSimple, SIMPLE_TYPES, TYPES } from './editor/types';
+import { SIMPLE_TYPES, TYPES } from './editor/types';
 
-function freeGenerator(schema, childKey, chid, parent) {
-  return {
-    types: TYPES,
+function createFreeGenerator(recursiveFree) {
+  const scheme = {
+    type: TYPES,
     others: { types: TYPES }
   }
+
+  const generator = (schema, childKey, child, parent) => scheme
+
+  if (recursiveFree) {
+    scheme.generator = generator
+  }
+
+  return generator
 }
 
 function App() {
@@ -92,7 +100,7 @@ function App() {
               TYPES: TYPES,
               dispatcher: disptachObject,
               others: { types: TYPES },
-              generator: (schema, childKey, child, parent) => ({ ...freeGenerator(), generator: freeGenerator })
+              generator: createFreeGenerator(true)
             }}
           />
           <hr />
