@@ -8,7 +8,9 @@ import { SIMPLE_TYPES, TYPES } from './editor/types';
 function createFreeGenerator(recursiveFree) {
   const scheme = {
     type: TYPES,
-    others: { types: TYPES }
+    others: { types: TYPES },
+    canEditPosition: true,
+    canEditKey: true 
   }
 
   const generator = (schema, childKey, child, parent) => scheme

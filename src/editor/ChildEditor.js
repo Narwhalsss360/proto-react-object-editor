@@ -51,9 +51,13 @@ export default function ChildEditor({ childKey, value, schema, parent }) {
     })
     setNewKey(null)
   }, [parentIsArray, dispatcher, index, childKey])
-
+  
   const templateTypeCombo = property(property(schema, 'others'), 'types', [])
   .concat(keys(property(schema, 'templates', {})).filter(template => !TYPES.includes(template)))
+
+  const CAN_EDIT_KEY_OR_POSITION = property(scheme, Array.isArray(parent) ? 'canEditPosition' : 'canEditKey', false)
+  const CAN_EDIT_TYPE = templateTypeCombo.length > 0
+
   const headerGenerator = (value, schema) => (
     <Row>
       {
@@ -63,7 +67,7 @@ export default function ChildEditor({ childKey, value, schema, parent }) {
         </Col>
       }
       {
-        newKey !== null &&
+        (newKey !== null && CAN_EDIT_TYPE) &&
         (Array.isArray(value) || !isSimple(value)) &&
         <Col md='auto'>
           <Form.Select value={typeof value} onChange={evt => setType(evt.target.value)}>
@@ -85,21 +89,28 @@ export default function ChildEditor({ childKey, value, schema, parent }) {
       {
         newKey === null ?
           <Badge
-            onClick={() =>
-            property(schema, 'required', false) ? null : setNewKey(parentIsArray ? index + 1 : childKey)}
-            style={{cursor: 'pointer'}}
+            onClick={CAN_EDIT_KEY_OR_POSITION || CAN_EDIT_TYPE ?
+              () => property(schema, 'required', false) ? null : setNewKey(parentIsArray ? index + 1 : childKey)
+              : null
+            }
+            style={CAN_EDIT_KEY_OR_POSITION || CAN_EDIT_TYPE ? {cursor: 'pointer'} : {}}
           >
-            ✎ &nbsp; {parentIsArray ? index + 1 : childKey}
+            {CAN_EDIT_KEY_OR_POSITION || CAN_EDIT_TYPE ? '✎ ' : ''}
+            {parentIsArray ? index + 1 : childKey}
           </Badge> :
-          <Form onSubmit={evt => evt.preventDefault()}>
+            <Form onSubmit={evt => evt.preventDefault()}>
             <Row>
+            {
+              CAN_EDIT_KEY_OR_POSITION ?
               <Col>
                 <Form.Control
-                  type={parentIsArray ? 'number' : 'text'}
-                  value={newKey}
-                  onChange={evt => setNewKey(evt.target.value)}
+                type={parentIsArray ? 'number' : 'text'}
+                value={newKey}
+                onChange={evt => setNewKey(evt.target.value)}
                 />
-              </Col>
+              </Col> :
+              <></>
+            }
               <Col md='auto'>
                 <Button variant='outline-danger' onClick={() => setNewKey(null)}>Cancel</Button>
               </Col>
@@ -107,7 +118,7 @@ export default function ChildEditor({ childKey, value, schema, parent }) {
                 <Button variant='success' onClick={applyNewKey}>Apply</Button>
               </Col>
             </Row>
-          </Form>
+            </Form>
       }
       </Col>
     </Row>
