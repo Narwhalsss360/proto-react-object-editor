@@ -42,39 +42,39 @@ export default function ChildEditor({ childKey, value, schema, parent }) {
     <Row>
       {
         property(schema, 'deleter', null) !== null &&
-        <Col md='auto'>
+        <Col md='auto' style={{margin: 'auto'}}>
           <CloseButton onClick={schema.deleter} />
         </Col>
       }
+      <Col>
       {
         newKey === null ?
-        <Col>
           <Badge
             onClick={() =>
             property(schema, 'required', false) ? null : setNewKey(parentIsArray ? index + 1 : childKey)}
             style={{cursor: 'pointer'}}
           >
             ✎ &nbsp; {parentIsArray ? index + 1 : childKey}
-          </Badge>
-        </Col> :
-        <Form onSubmit={evt => evt.preventDefault()}>
-          <Row>
-            <Col>
-              <Form.Control
-                type={parentIsArray ? 'number' : 'text'}
-                value={newKey}
-                onChange={evt => setNewKey(evt.target.value)}
-              />
-            </Col>
-            <Col md='auto'>
-              <Button variant='outline-danger' onClick={() => setNewKey(null)}>Cancel</Button>
-            </Col>
-            <Col>
-              <Button variant='success' onClick={applyNewKey}>Apply</Button>
-            </Col>
-          </Row>
-        </Form>
+          </Badge> :
+          <Form onSubmit={evt => evt.preventDefault()}>
+            <Row>
+              <Col>
+                <Form.Control
+                  type={parentIsArray ? 'number' : 'text'}
+                  value={newKey}
+                  onChange={evt => setNewKey(evt.target.value)}
+                />
+              </Col>
+              <Col md='auto'>
+                <Button variant='outline-danger' onClick={() => setNewKey(null)}>Cancel</Button>
+              </Col>
+              <Col md='auto'>
+                <Button variant='success' onClick={applyNewKey}>Apply</Button>
+              </Col>
+            </Row>
+          </Form>
       }
+      </Col>
     </Row>
   )
 
