@@ -83,10 +83,10 @@ export default function SimpleEditor({ value, scheme }) {
   const body = (
     <Form onSubmit={evt => evt.preventDefault()}>
       <Row>
-        <Col md='auto'>
+        <Col md='auto' style={{margin: 'auto'}}>
           {
             property(scheme, 'types', []).length <= 1 ?
-            <Badge>{typeof value}</Badge> :
+            <Badge>{TYPE_NAMES[typeof value]}</Badge> :
             <Form.Select value={typeof value} onChange={evt => setType(evt.target.value)}>
               {
                 scheme.types.map(type => (
