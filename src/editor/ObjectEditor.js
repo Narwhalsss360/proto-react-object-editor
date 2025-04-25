@@ -4,7 +4,6 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import CloseButton from 'react-bootstrap/CloseButton'
 import Accordion from 'react-bootstrap/Accordion'
-import Form from 'react-bootstrap/Form'
 import NewChildControls from './NewChildControls'
 import ChildEditor from './ChildEditor'
 import useOnFirstLoad from '../hooks/useOnFirstLoad'
@@ -53,13 +52,6 @@ export default function ObjectEditor({ value, schema }) {
       value: ''
     })
   }, [dispatcher, dispatchNewChildInfo, newChildInfo])
-
-  const setType = useCallback(type => {
-    dispatcher({
-      type: 'set-as',
-      value: TYPE_GENERATORS[type]()
-    })
-  }, [dispatcher])
 
   const ensureRequired = useCallback(() => {
     if (schema === null || !('children' in schema)) {

@@ -49,13 +49,6 @@ export default function ArrayEditor({ value, schema }) {
     })
   }, [dispatcher, dispatchNewChildInfo, newChildInfo])
 
-  const setType = useCallback(type => {
-    dispatcher({
-      type: 'set-as',
-      value: TYPE_GENERATORS[type]()
-    })
-  }, [dispatcher])
-
   const headerGenerator = property(schema, 'headerGenerator', (value, schema) => (
     property(schema, 'label') === undefined && property(schema, 'deleter', null) !== null ?
     <></> :

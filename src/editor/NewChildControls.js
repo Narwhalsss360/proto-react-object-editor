@@ -3,11 +3,11 @@ import Form from 'react-bootstrap/Form'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Button from 'react-bootstrap/Button'
+import Badge from 'react-bootstrap/Badge'
 import BooleanControl from './BooleanControl'
 import { inputType, isSimple, TYPE_GENERATORS, TYPE_NAMES, TYPE_PARSERS, TYPES } from './types'
 import { keys } from './objectIterators'
 import { property } from './schemas'
-import { Badge } from 'react-bootstrap'
 
 export default function NewChildControls({ newChildInfo, dispatchNewChildInfo, onSubmit, schema, parent }) {
   const parentType = Array.isArray(parent) ? 'array' : 'object'

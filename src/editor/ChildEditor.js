@@ -20,7 +20,6 @@ export default function ChildEditor({ childKey, value, schema, parent }) {
 
   const index = childKey
   const [newKey, setNewKey] = useState(null)
-  const [newPosition, setNewPosition] = [newKey, setNewKey]
 
   const dispatcher = requireProperty(schema, 'dispatcher').dispatcher
 
@@ -31,13 +30,13 @@ export default function ChildEditor({ childKey, value, schema, parent }) {
     dispatcher(parentIsArray ? {
       type: 'swap-elements',
       index,
-      target: newPosition - 1
+      target: newKey - 1
     } : {
       type: 'swap-key-name',
       key: childKey,
       newKey: newKey
     })
-  }, [dispatcher, parentIsArray, index, childKey, newPosition, newKey])
+  }, [dispatcher, parentIsArray, index, childKey, newKey])
 
   const setType = useCallback(type => {
     dispatcher(parentIsArray ? {
